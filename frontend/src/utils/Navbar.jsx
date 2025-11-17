@@ -1,11 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Video, Menu, X } from 'lucide-react';
 
-function Navbar({ scrolled, isMenuOpen, setIsMenuOpen }) {
+function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-slate-950/90' : 'bg-transparent'}`}>
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        
+    <nav className={`fixed w-full z-50 transition-all  text-white duration-300 ${scrolled ? 'bg-slate-900/80 backdrop-blur-lg border-b border-white/10' : 'bg-transparent'}`}>   
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">        
         {/* LOGO */}
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
@@ -36,6 +47,7 @@ function Navbar({ scrolled, isMenuOpen, setIsMenuOpen }) {
         <button
           className="md:hidden text-white"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Toggle menu"
         >
           {isMenuOpen ? <X /> : <Menu />}
         </button>
@@ -43,9 +55,8 @@ function Navbar({ scrolled, isMenuOpen, setIsMenuOpen }) {
 
       {/* MOBILE MENU */}
       {isMenuOpen && (
-        <div className="md:hidden bg-slate-900 text-white">
+        <div className="md:hidden bg-slate-900/95 backdrop-blur-lg border-t border-white/10 text-white">
           <div className="px-6 py-4 flex flex-col gap-4">
-
             <a href="/" className="hover:text-blue-400 transition">Home</a>
             <a href="/#features" className="hover:text-blue-400 transition">Features</a>
             <a href="/#pricing" className="hover:text-blue-400 transition">Pricing</a>
@@ -66,4 +77,4 @@ function Navbar({ scrolled, isMenuOpen, setIsMenuOpen }) {
   );
 }
 
-export default Navbar;
+export default Navbar ;

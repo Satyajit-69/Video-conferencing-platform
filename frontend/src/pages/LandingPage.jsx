@@ -43,7 +43,6 @@ export default function VideoConferencingLanding() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white">
-      <Navbar scrolled={scrolled} isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
 
       {/* Hero Section with Image Background */}
       <section className="relative pt-32 pb-20 px-6 overflow-hidden">
@@ -363,7 +362,7 @@ export default function VideoConferencingLanding() {
         </div>
       </section>
 
-      <Footer />
+      
     </div>
   );
 }
