@@ -7,6 +7,10 @@ export const AuthProvider = ({ children }) => {
     return JSON.parse(localStorage.getItem("user")) || null;
   });
 
+  const [welcomeMode, setWelcomeMode] = useState(() => {
+    return localStorage.getItem("welcomeMode") || "login";
+  });
+
   const [loading, setLoading] = useState(false);
 
   // ------------------------------------
@@ -26,7 +30,10 @@ export const AuthProvider = ({ children }) => {
       if (!res.ok) throw new Error(data.message);
 
       setUser(data.user);
+      setWelcomeMode("login");
+
       localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("welcomeMode", "login");
 
       return { success: true };
 
@@ -54,7 +61,10 @@ export const AuthProvider = ({ children }) => {
       if (!res.ok) throw new Error(data.message);
 
       setUser(data.user);
+      setWelcomeMode("register");
+
       localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("welcomeMode", "register");
 
       return { success: true };
 
@@ -70,7 +80,9 @@ export const AuthProvider = ({ children }) => {
   // ------------------------------------
   const logout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("welcomeMode");
     setUser(null);
+    setWelcomeMode("login");
   };
 
   return (
@@ -81,6 +93,7 @@ export const AuthProvider = ({ children }) => {
         login,
         register,
         logout,
+        welcomeMode,
         isAuthenticated: !!user,
       }}
     >

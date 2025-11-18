@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { 
-  Video, Plus, Users, Clock, Calendar, Copy, ExternalLink, LogOut, Settings, Play 
+  Plus, Users, Clock, Calendar, Copy, ExternalLink, Play 
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Dashboard() {
   const [meetingCode, setMeetingCode] = useState("");
 
-  const { user, logout } = useAuth(); // access logged user
+  const { user, welcomeMode } = useAuth();
 
   const upcomingMeetings = [
     { id: 1, title: "Team Standup", time: "10:00 AM", date: "Today", participants: 5, roomId: "abc-123" },
@@ -35,47 +35,41 @@ export default function Dashboard() {
     alert("Meeting link copied!");
   };
 
+  // --------------------------------------
+  // 🎉 DYNAMIC WELCOME TEXT LOGIC
+  // --------------------------------------
+
+  const headingText =
+    welcomeMode === "register"
+      ? `Welcome, ${user?.name || "User"} 🎉`
+      : `Welcome back, ${user?.name || "User"} 👋`;
+
+  const subText =
+    welcomeMode === "register"
+      ? "Start your first meeting now!"
+      : "Ready for your next meeting?";
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white">
       
-      {/* Top Navbar */}
-      <nav className="bg-slate-900/70 backdrop-blur-md border-b border-slate-800">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-          
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-700 rounded-xl flex items-center justify-center">
-              <Video className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-2xl font-bold">ConferX</span>
-          </div>
+      <div className="max-w-7xl mx-auto px-6 py-10 pt-4">
 
-          <div className="flex items-center gap-5 text-slate-300">
-            <button className="hover:text-white transition">
-              <Settings className="w-5 h-5" />
-            </button>
-            <button onClick={logout} className="hover:text-white transition">
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
-
-        </div>
-      </nav>
-
-      {/* Page Content */}
-      <div className="max-w-7xl mx-auto px-6 py-10">
-        
-        {/* Welcome */}
-        <div className="mb-10">
-          <h1 className="text-4xl font-bold mb-1">
-            Welcome back, {user?.name || "User"} 👋
+        {/* Welcome Section */}
+        <div className="mb-10 mt-12 pt-4">
+          <h1 className="text-4xl font-bold mb-1 mt-12">
+            {headingText}
           </h1>
-          <p className="text-slate-400">Ready for your next meeting?</p>
+          <p className="text-slate-400">
+            {subText}
+          </p>
         </div>
 
-        {/* Quick Actions */}
+        {/* -------------------------- */}
+        {/* QUICK ACTIONS */}
+        {/* -------------------------- */}
         <div className="grid md:grid-cols-2 gap-6 mb-12">
 
-          {/* New Meeting */}
+          {/* NEW Meeting */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6 hover:border-blue-500/40 transition">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
@@ -86,6 +80,7 @@ export default function Dashboard() {
                 <p className="text-slate-400 text-sm">Instant meeting now</p>
               </div>
             </div>
+
             <button
               onClick={handleCreateMeeting}
               className="w-full py-3 bg-blue-600 rounded-lg font-medium hover:bg-blue-700 transition"
@@ -94,7 +89,7 @@ export default function Dashboard() {
             </button>
           </div>
 
-          {/* Join Meeting */}
+          {/* JOIN Meeting */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6 hover:border-purple-500/40 transition">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center">
@@ -123,10 +118,11 @@ export default function Dashboard() {
               </button>
             </div>
           </div>
-
         </div>
 
-        {/* Upcoming Meetings */}
+        {/* -------------------------- */}
+        {/* UPCOMING MEETINGS */}
+        {/* -------------------------- */}
         <div className="mb-10">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">Upcoming Meetings</h2>
@@ -136,7 +132,7 @@ export default function Dashboard() {
           <div className="grid md:grid-cols-3 gap-5">
             {upcomingMeetings.map((m) => (
               <div key={m.id} className="bg-slate-900/50 p-5 rounded-xl border border-slate-800 hover:border-blue-500/40 transition group">
-                
+
                 <div className="flex justify-between mb-3">
                   <div>
                     <h3 className="font-bold text-lg">{m.title}</h3>
@@ -174,7 +170,9 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Recent Meetings */}
+        {/* -------------------------- */}
+        {/* RECENT MEETINGS */}
+        {/* -------------------------- */}
         <div>
           <h2 className="text-2xl font-bold mb-4">Recent Meetings</h2>
 
@@ -186,16 +184,13 @@ export default function Dashboard() {
                   <h3 className="font-medium">{m.title}</h3>
                   <div className="flex gap-4 text-sm text-slate-400 mt-1">
                     <span className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {m.date}
+                      <Calendar className="w-4 h-4" /> {m.date}
                     </span>
                     <span className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      {m.duration}
+                      <Clock className="w-4 h-4" /> {m.duration}
                     </span>
                     <span className="flex items-center gap-1">
-                      <Users className="w-4 h-4" />
-                      {m.participants}
+                      <Users className="w-4 h-4" /> {m.participants}
                     </span>
                   </div>
                 </div>

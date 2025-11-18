@@ -6,27 +6,39 @@ import Register from "../pages/Register";
 import Navbar from "../utils/Navbar";
 import Footer from "../utils/Footer";
 import NotFound from "../pages/NotFound";
-import Dashboard from "@/pages/DashBoard";
+import Dashboard from "../pages/DashBoard";
+import VideoMeeting from "../pages/VideoMeeting";
+import MeetingRoom from "../pages/MeetingRoom";   // <-- IMPORTANT
+
 export default function AppRouter() {
   return (
     <BrowserRouter>
-    <Navbar />
+      <Navbar />
+
       <Routes>
-        {/* DEFAULT ROUTE */}
+
+        {/* DEFAULT ROUTES */}
         <Route path="/" element={<Landing />} />
         <Route path="/home" element={<Landing />} />
 
         {/* AUTH ROUTES */}
-         <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<Register />} />
 
-        {/* MAIN APP ROUTES */}
+        {/* DASHBOARD */}
         <Route path="/dashboard" element={<Dashboard />} />
-        {/* <Route path="/meeting/:roomId" element={<Meeting />} /> */ }
+
+        {/* MEETING ROUTE */}
+        <Route path="/meeting/:roomId" element={<MeetingRoom />} />
+
+        {/* TEMP TEST ROUTE FOR VIDEO MEETING UI */}
+        <Route path="/meetingroom" element={<VideoMeeting />} />
 
         {/* 404 */}
-        <Route path="*" element = {<NotFound />} />
-      </Routes >
+        <Route path="*" element={<NotFound />} />
+
+      </Routes>
+
       <Footer />
     </BrowserRouter>
   );
