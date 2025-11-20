@@ -1,4 +1,6 @@
 import { createContext, useContext, useState } from "react";
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
 
 const AuthContext = createContext();
 
@@ -12,6 +14,21 @@ export const AuthProvider = ({ children }) => {
   });
 
   const [loading, setLoading] = useState(false);
+
+  // ---------- ALERT STATE ----------
+  const [alert, setAlert] = useState({
+    open: false,
+    type: "success",
+    message: "",
+  });
+
+  const showAlert = (type, message) => {
+    setAlert({ open: true, type, message });
+
+    setTimeout(() => {
+      setAlert((prev) => ({ ...prev, open: false }));
+    }, 3000);
+  };
 
   // ------------------------------------
   // LOGIN
@@ -35,9 +52,11 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("welcomeMode", "login");
 
+      showAlert("success", "Successfully logged in!");
       return { success: true };
 
     } catch (err) {
+      showAlert("error", err.message);
       return { success: false, message: err.message };
     } finally {
       setLoading(false);
@@ -66,9 +85,11 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("user", JSON.stringify(data.user));
       localStorage.setItem("welcomeMode", "register");
 
+      showAlert("success", "Account created successfully!");
       return { success: true };
 
     } catch (err) {
+      showAlert("error", err.message);
       return { success: false, message: err.message };
     } finally {
       setLoading(false);
@@ -83,6 +104,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("welcomeMode");
     setUser(null);
     setWelcomeMode("login");
+
+    showAlert("info", "Logged out successfully.");
   };
 
   return (
@@ -97,6 +120,16 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated: !!user,
       }}
     >
+      {/* GLOBAL SNACKBAR ALERT */}
+      <Snackbar
+        open={alert.open}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert severity={alert.type} variant="filled">
+          {alert.message}
+        </Alert>
+      </Snackbar>
+
       {children}
     </AuthContext.Provider>
   );

@@ -22,12 +22,12 @@ export default function Dashboard() {
 
   const handleJoinMeeting = () => {
     if (!meetingCode.trim()) return;
-    window.location.href = `/meeting/${meetingCode}`;
+    window.location.href = `/meetingroom/${meetingCode}`;
   };
 
   const handleCreateMeeting = () => {
     const newId = Math.random().toString(36).substring(2, 10);
-    window.location.href = `/meeting/${newId}`;
+    window.location.href = `/meetingroom/${newId}`;
   };
 
   const copyToClipboard = (text) => {

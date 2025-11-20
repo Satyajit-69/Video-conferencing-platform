@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import Landing from "../pages/LandingPage";
 import LoginPage from "../pages/login";
@@ -8,12 +8,24 @@ import Footer from "../utils/Footer";
 import NotFound from "../pages/NotFound";
 import Dashboard from "../pages/DashBoard";
 import VideoMeeting from "../pages/VideoMeeting";
-import MeetingRoom from "../pages/MeetingRoom";   // <-- IMPORTANT
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
-      <Navbar />
+      <MainRoutes />
+    </BrowserRouter>
+  );
+}
+
+function MainRoutes() {
+  const location = useLocation();
+
+  // 👇 Hide navbar & footer when meeting is open
+  const hideLayout = location.pathname.startsWith("/meetingroom/");
+
+  return (
+    <>
+      {!hideLayout && <Navbar />}
 
       <Routes>
 
@@ -28,18 +40,14 @@ export default function AppRouter() {
         {/* DASHBOARD */}
         <Route path="/dashboard" element={<Dashboard />} />
 
-        {/* MEETING ROUTE */}
-        <Route path="/meeting/:roomId" element={<MeetingRoom />} />
+        {/* VIDEO MEETING ROUTE */}
+        <Route path="/meetingroom/:id" element={<VideoMeeting />} />
 
-        {/* TEMP TEST ROUTE FOR VIDEO MEETING UI */}
-        <Route path="/meetingroom" element={<VideoMeeting />} />
-
-        {/* 404 */}
+        {/* 404 PAGE */}
         <Route path="*" element={<NotFound />} />
-
       </Routes>
 
-      <Footer />
-    </BrowserRouter>
+      {!hideLayout && <Footer />}
+    </>
   );
 }

@@ -1,99 +1,88 @@
 // controllers/socketManager.js
 
-// Store which users are in which room
-let connections = {};   // { roomId: [socketIds] }
-
-// Store messages room-wise
-let messages = {};      // { roomId: [{ sender, message, time }] }
+let connections = {};   // roomId → [socketIds]
+let messages = {};      // roomId → [ { sender, text, timestamp } ]
 
 export const socketManager = (io) => {
-  
+
   io.on("connection", (socket) => {
-    console.log("User connected:", socket.id);
+    console.log("✅ User connected:", socket.id);
 
-    // =============================
     // JOIN ROOM
-    // =============================
-    socket.on("join-room", (roomId) => {
+    socket.on("join-room", (roomId, username) => {
+      console.log(`📥 User ${socket.id} joining: ${roomId}`);
 
-      // Save connection
       if (!connections[roomId]) connections[roomId] = [];
+      if (!messages[roomId]) messages[roomId] = [];
+
+      const isInitiator = connections[roomId].length === 0;
+
       connections[roomId].push(socket.id);
-
       socket.join(roomId);
-      console.log(`User ${socket.id} joined room ${roomId}`);
 
-      // Send chat history to the new user
-      socket.emit("previous-messages", messages[roomId] || []);
+      socket.roomId = roomId;
+      socket.username = username || "User";
 
-      // Notify others
-      socket.to(roomId).emit("user-joined", socket.id);
-    });
+      socket.emit("joined-room", { isInitiator });
 
-    // =============================
-    // CHAT MESSAGE TRACKING
-    // =============================
-    socket.on("chat-message", (data, sender) => {
+      socket.emit("previous-messages", messages[roomId]);
 
-      // STEP 1 → find which room this socket belongs to
-      const [matchingRoom, found] = Object.entries(connections).reduce(
-        ([room, isFound], [roomKey, roomValue]) => {
-
-          if (!isFound && roomValue.includes(socket.id)) {
-            return [roomKey, true];
-          }
-
-          return [room, isFound];
-        },
-        ["", false]
-      );
-
-      // If room found
-      if (found === true) {
-
-        // If no previous messages exist → create empty array
-        if (messages[matchingRoom] === undefined) {
-          messages[matchingRoom] = [];
-        }
-
-        // Push new message with time
-        const msg = {
-          sender,
-          data,
-          time: Date.now()
-        };
-
-        messages[matchingRoom].push(msg);
-
-        // Broadcast message to others
-        socket.to(matchingRoom).emit("receive-message", msg);
+      if (!isInitiator) {
+        socket.to(roomId).emit("user-joined", {
+          userId: socket.id,
+          username: socket.username,
+        });
       }
     });
 
-    // =============================
+    // ==========================================
+    // CHAT MESSAGE — FIXED FOR YOUR FRONTEND
+    // ==========================================
+
+    socket.on("chat-message", ({ roomId, message }) => {
+      console.log("💬 Chat message received:", message);
+
+      if (!messages[roomId]) messages[roomId] = [];
+
+      // Store
+      messages[roomId].push(message);
+
+      // Send to others
+      socket.to(roomId).emit("chat-message", {
+        message
+      });
+    });
+
+    // ==========================================
     // WEBRTC SIGNALS
-    // =============================
+    // ==========================================
     socket.on("offer", ({ roomId, offer }) => {
-      socket.to(roomId).emit("offer", { sender: socket.id, offer });
+      socket.to(roomId).emit("offer", { userId: socket.id, offer });
     });
 
     socket.on("answer", ({ roomId, answer }) => {
-      socket.to(roomId).emit("answer", { sender: socket.id, answer });
+      socket.to(roomId).emit("answer", { userId: socket.id, answer });
     });
 
     socket.on("ice-candidate", ({ roomId, candidate }) => {
-      socket.to(roomId).emit("ice-candidate", { sender: socket.id, candidate });
+      socket.to(roomId).emit("ice-candidate", { userId: socket.id, candidate });
     });
 
-    // =============================
     // DISCONNECT
-    // =============================
     socket.on("disconnect", () => {
-      console.log("User disconnected:", socket.id);
+      const room = socket.roomId;
 
-      // Remove user from all rooms
-      for (let room in connections) {
+      if (room && connections[room]) {
+        socket.to(room).emit("user-left", { userId: socket.id });
+
         connections[room] = connections[room].filter(id => id !== socket.id);
+
+        if (connections[room].length === 0) {
+          delete connections[room];
+          delete messages[room];
+
+          console.log(`🗑️ Cleaned empty room: ${room}`);
+        }
       }
     });
 
