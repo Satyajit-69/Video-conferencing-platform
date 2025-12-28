@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:5000/api/users/login", {
+      const res = await fetch("https://video-conferencing-platform-98jv.onrender.com/api/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
 
-      const res = await fetch("http://localhost:5000/api/users/register", {
+      const res = await fetch("https://video-conferencing-platform-98jv.onrender.com/api/users/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, username, password }),

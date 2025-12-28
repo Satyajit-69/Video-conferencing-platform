@@ -118,5 +118,8 @@ export const getAllActivity = async (req, res) => {
     console.log("Activity Fetch Error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
+
+
+  
 };
 

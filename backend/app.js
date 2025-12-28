@@ -6,6 +6,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { socketManager } from "./src/controllers/socketManager.js";
 import user_routes from "./src/routes/user_routes.js";
+import message from "./src/models/message.js";
+
 
 dotenv.config();
 

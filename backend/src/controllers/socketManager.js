@@ -1,90 +1,129 @@
 // controllers/socketManager.js
 
-let connections = {};   // roomId → [socketIds]
-let messages = {};      // roomId → [ { sender, text, timestamp } ]
+import Message from "../models/message.js";
+
+// roomId -> [{ socketId, username }]
+let connections = {};
 
 export const socketManager = (io) => {
-
   io.on("connection", (socket) => {
     console.log("✅ User connected:", socket.id);
 
+    // ---------------------------------------------------
     // JOIN ROOM
-    socket.on("join-room", (roomId, username) => {
-      console.log(`📥 User ${socket.id} joining: ${roomId}`);
-
+    // ---------------------------------------------------
+    socket.on("join-room", async (roomId, username) => {
       if (!connections[roomId]) connections[roomId] = [];
-      if (!messages[roomId]) messages[roomId] = [];
 
       const isInitiator = connections[roomId].length === 0;
 
-      connections[roomId].push(socket.id);
+      const user = {
+        socketId: socket.id,
+        username: username || "User",
+      };
+
+      connections[roomId].push(user);
       socket.join(roomId);
 
       socket.roomId = roomId;
-      socket.username = username || "User";
+      socket.username = user.username;
 
       socket.emit("joined-room", { isInitiator });
 
-      socket.emit("previous-messages", messages[roomId]);
+      // Load previous chat messages
+      const previousMessages = await Message.find({ roomId }).sort({
+        timestamp: 1,
+      });
 
-      if (!isInitiator) {
-        socket.to(roomId).emit("user-joined", {
-          userId: socket.id,
-          username: socket.username,
-        });
-      }
+      socket.emit(
+        "previous-messages",
+        previousMessages.map((msg) => ({
+          text: msg.text,
+          sender: msg.sender,
+          timestamp: msg.timestamp.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        }))
+      );
+
+      // Notify others (NOT self)
+      socket.to(roomId).emit("user-joined", {
+        userId: socket.id,
+        username: socket.username,
+      });
+
+      console.log(`📥 ${socket.id} joined room ${roomId}`);
     });
 
-    // ==========================================
-    // CHAT MESSAGE — FIXED FOR YOUR FRONTEND
-    // ==========================================
+    // ---------------------------------------------------
+    // CHAT
+    // ---------------------------------------------------
+    socket.on("chat-message", async ({ roomId, message }) => {
+      const savedMessage = await Message.create({
+        roomId,
+        sender: message.sender,
+        text: message.text,
+        timestamp: new Date(),
+      });
 
-    socket.on("chat-message", ({ roomId, message }) => {
-      console.log("💬 Chat message received:", message);
-
-      if (!messages[roomId]) messages[roomId] = [];
-
-      // Store
-      messages[roomId].push(message);
-
-      // Send to others
       socket.to(roomId).emit("chat-message", {
-        message
+        message: {
+          text: savedMessage.text,
+          sender: savedMessage.sender,
+          timestamp: savedMessage.timestamp.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        },
       });
     });
 
-    // ==========================================
-    // WEBRTC SIGNALS
-    // ==========================================
+    // ---------------------------------------------------
+    // WEBRTC SIGNALING (SAFE)
+    // ---------------------------------------------------
+
     socket.on("offer", ({ roomId, offer }) => {
-      socket.to(roomId).emit("offer", { userId: socket.id, offer });
+      socket.to(roomId).emit("offer", {
+        from: socket.id,
+        offer,
+      });
     });
 
-    socket.on("answer", ({ roomId, answer }) => {
-      socket.to(roomId).emit("answer", { userId: socket.id, answer });
+    socket.on("answer", ({ roomId, answer, to }) => {
+      io.to(to).emit("answer", {
+        from: socket.id,
+        answer,
+      });
     });
 
-    socket.on("ice-candidate", ({ roomId, candidate }) => {
-      socket.to(roomId).emit("ice-candidate", { userId: socket.id, candidate });
+    socket.on("ice-candidate", ({ roomId, candidate, to }) => {
+      io.to(to).emit("ice-candidate", {
+        from: socket.id,
+        candidate,
+      });
     });
 
+    // ---------------------------------------------------
     // DISCONNECT
+    // ---------------------------------------------------
     socket.on("disconnect", () => {
-      const room = socket.roomId;
+      const roomId = socket.roomId;
 
-      if (room && connections[room]) {
-        socket.to(room).emit("user-left", { userId: socket.id });
+      if (roomId && connections[roomId]) {
+        connections[roomId] = connections[roomId].filter(
+          (u) => u.socketId !== socket.id
+        );
 
-        connections[room] = connections[room].filter(id => id !== socket.id);
+        socket.to(roomId).emit("user-left", { userId: socket.id });
 
-        if (connections[room].length === 0) {
-          delete connections[room];
-          delete messages[room];
-
-          console.log(`🗑️ Cleaned empty room: ${room}`);
+        if (connections[roomId].length === 0) {
+          delete connections[roomId];
+          console.log(`🗑️ Room ${roomId} cleaned`);
         }
       }
-    });
 
+      console.log("❌ User disconnected:", socket.id);
+    });
   });
 };

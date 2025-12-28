@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 
-const SOCKET_SERVER = "http://localhost:5000";
+const SOCKET_SERVER = "https://video-conferencing-platform-98jv.onrender.com";
 
 export default function VideoMeeting() {
   const localVideo = useRef(null);
@@ -108,7 +108,19 @@ export default function VideoMeeting() {
       socketRef.current.on("ice-candidate", handleNewICECandidate);
       
       socketRef.current.on("chat-message", (data) => {
+        console.log("💬 Received chat message:", data.message);
         setMessages(prev => [...prev, { ...data.message, isOwn: false }]);
+      });
+
+      socketRef.current.on("previous-messages", (previousMessages) => {
+        console.log("📚 Loaded previous messages:", previousMessages);
+        const formattedMessages = previousMessages.map(msg => ({
+          text: msg.text,
+          sender: msg.sender,
+          timestamp: msg.timestamp,
+          isOwn: msg.sender === username
+        }));
+        setMessages(formattedMessages);
       });
       
       socketRef.current.on("user-left", () => {
@@ -191,7 +203,7 @@ export default function VideoMeeting() {
     };
 
     peer.ontrack = (event) => {
-      console.log("📹 Remote stream received!");
+      console.log("📹 Remote stream received!", event.streams[0]);
       const remoteStream = event.streams[0];
       remoteStreamRef.current = remoteStream;
       
@@ -415,12 +427,15 @@ export default function VideoMeeting() {
     if (messageInput.trim() && socketRef.current) {
       const message = {
         text: messageInput,
-        sender: username,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        sender: username
       };
       
       socketRef.current.emit("chat-message", { roomId, message });
-      setMessages(prev => [...prev, { ...message, isOwn: true }]);
+      setMessages(prev => [...prev, { 
+        ...message, 
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        isOwn: true 
+      }]);
       setMessageInput("");
     }
   };
