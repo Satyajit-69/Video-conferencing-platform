@@ -1,8 +1,15 @@
 import React, { useState } from "react";
-import { 
-  Plus, Users, Clock, Calendar, Copy, ExternalLink, Play 
+import {
+  Plus,
+  Users,
+  Clock,
+  Calendar,
+  Copy,
+  ExternalLink,
+  Play,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import AssistantPanel from "../components/assistant/AssistantPanel";
 
 export default function Dashboard() {
   const [meetingCode, setMeetingCode] = useState("");
@@ -10,14 +17,47 @@ export default function Dashboard() {
   const { user, welcomeMode } = useAuth();
 
   const upcomingMeetings = [
-    { id: 1, title: "Team Standup", time: "10:00 AM", date: "Today", participants: 5, roomId: "abc-123" },
-    { id: 2, title: "Client Presentation", time: "2:00 PM", date: "Today", participants: 8, roomId: "xyz-991" },
-    { id: 3, title: "Project Review", time: "11:00 AM", date: "Tomorrow", participants: 6, roomId: "rev-778" }
+    {
+      id: 1,
+      title: "Team Standup",
+      time: "10:00 AM",
+      date: "Today",
+      participants: 5,
+      roomId: "abc-123",
+    },
+    {
+      id: 2,
+      title: "Client Presentation",
+      time: "2:00 PM",
+      date: "Today",
+      participants: 8,
+      roomId: "xyz-991",
+    },
+    {
+      id: 3,
+      title: "Project Review",
+      time: "11:00 AM",
+      date: "Tomorrow",
+      participants: 6,
+      roomId: "rev-778",
+    },
   ];
 
   const recentMeetings = [
-    { id: 1, title: "UI Design Review", date: "Jan 14, 2025", duration: "45 min", participants: 4 },
-    { id: 2, title: "Sprint Planning", date: "Jan 12, 2025", duration: "1h 20min", participants: 7 }
+    {
+      id: 1,
+      title: "UI Design Review",
+      date: "Jan 14, 2025",
+      duration: "45 min",
+      participants: 4,
+    },
+    {
+      id: 2,
+      title: "Sprint Planning",
+      date: "Jan 12, 2025",
+      duration: "1h 20min",
+      participants: 7,
+    },
   ];
 
   const handleJoinMeeting = () => {
@@ -51,24 +91,23 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white">
-      
       <div className="max-w-7xl mx-auto px-6 py-10 pt-4">
-
         {/* Welcome Section */}
         <div className="mb-10 mt-12 pt-4">
-          <h1 className="text-4xl font-bold mb-1 mt-12">
+          <h1 className="text-4xl font-bold mb-1 mt-12 flex items-center gap-2">
             {headingText}
+            <span className="px-2 py-0.5 text-xs rounded-full bg-purple-600/20 text-purple-400">
+              AI
+            </span>
           </h1>
-          <p className="text-slate-400">
-            {subText}
-          </p>
+
+          <p className="text-slate-400">{subText}</p>
         </div>
 
         {/* -------------------------- */}
         {/* QUICK ACTIONS */}
         {/* -------------------------- */}
         <div className="grid md:grid-cols-2 gap-6 mb-12">
-
           {/* NEW Meeting */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6 hover:border-blue-500/40 transition">
             <div className="flex items-center gap-3 mb-5">
@@ -126,13 +165,17 @@ export default function Dashboard() {
         <div className="mb-10">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">Upcoming Meetings</h2>
-            <button className="text-blue-400 text-sm hover:text-blue-300">View all</button>
+            <button className="text-blue-400 text-sm hover:text-blue-300">
+              View all
+            </button>
           </div>
 
           <div className="grid md:grid-cols-3 gap-5">
             {upcomingMeetings.map((m) => (
-              <div key={m.id} className="bg-slate-900/50 p-5 rounded-xl border border-slate-800 hover:border-blue-500/40 transition group">
-
+              <div
+                key={m.id}
+                className="bg-slate-900/50 p-5 rounded-xl border border-slate-800 hover:border-blue-500/40 transition group"
+              >
                 <div className="flex justify-between mb-3">
                   <div>
                     <h3 className="font-bold text-lg">{m.title}</h3>
@@ -147,24 +190,30 @@ export default function Dashboard() {
                 </div>
 
                 <div className="flex items-center text-sm text-slate-400 mb-4">
-                  <Users className="w-4 h-4 mr-2" /> {m.participants} participants
+                  <Users className="w-4 h-4 mr-2" /> {m.participants}{" "}
+                  participants
                 </div>
 
                 <div className="flex gap-2">
                   <button
-                    onClick={() => (window.location.href = `/meeting/${m.roomId}`)}
+                    onClick={() =>
+                      (window.location.href = `/meeting/${m.roomId}`)
+                    }
                     className="flex-1 bg-blue-600 py-2 rounded-lg text-sm hover:bg-blue-700 transition flex items-center justify-center gap-2"
                   >
                     <Play className="w-4 h-4" /> Join
                   </button>
                   <button
-                    onClick={() => copyToClipboard(`${window.location.origin}/meeting/${m.roomId}`)}
+                    onClick={() =>
+                      copyToClipboard(
+                        `${window.location.origin}/meeting/${m.roomId}`
+                      )
+                    }
                     className="p-2 bg-slate-800 rounded-lg hover:bg-slate-700"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
                 </div>
-
               </div>
             ))}
           </div>
@@ -178,8 +227,10 @@ export default function Dashboard() {
 
           <div className="bg-slate-900/60 border border-slate-800 rounded-xl divide-y divide-slate-800">
             {recentMeetings.map((m) => (
-              <div key={m.id} className="p-5 flex justify-between items-center hover:bg-slate-800/40 transition">
-
+              <div
+                key={m.id}
+                className="p-5 flex justify-between items-center hover:bg-slate-800/40 transition"
+              >
                 <div>
                   <h3 className="font-medium">{m.title}</h3>
                   <div className="flex gap-4 text-sm text-slate-400 mt-1">
@@ -198,13 +249,13 @@ export default function Dashboard() {
                 <button className="text-blue-400 text-sm hover:text-blue-300">
                   View Details
                 </button>
-
               </div>
             ))}
           </div>
         </div>
-
       </div>
+      <AssistantPanel />
+
     </div>
   );
 }
