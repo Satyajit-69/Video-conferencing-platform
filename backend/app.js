@@ -10,6 +10,7 @@ import cors from "cors";
 import { socketManager } from "./src/controllers/socketManager.js";
 import user_routes from "./src/routes/user_routes.js";
 import vector_routes from "./src/routes/vector_routes.js";
+import assistantRoutes from "./src/routes/assistant_routes.js";
 
 
 const app = express();
@@ -36,7 +37,7 @@ app.get("/home", (req, res) => {
 // Routes
 app.use("/api/users", user_routes);
 app.use("/api/vector", vector_routes);
-
+app.use("/api/assistant", assistantRoutes);
 // MongoDB connection
 mongoose
   .connect(process.env.MONGO_URL)

@@ -1,60 +1,115 @@
 import { useState } from "react";
-import { Bot, X } from "lucide-react";
+import { Bot, X, Send } from "lucide-react";
 import { AI_ENABLED } from "../../lib/utils";
 
 export default function AssistantPanel() {
   const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState([
+    { role: "assistant", content: "Hi 👋 How can I help you today?" },
+  ]);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // 🟢 COLLAPSED ICON STATE
+  // 🔹 Send message to backend
+  const sendMessage = async () => {
+    if (!input.trim() || loading) return;
+
+    const userMessage = { role: "user", content: input };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+  `${import.meta.env.VITE_BACKEND_URL}/api/assistant/chat`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: JSON.stringify({ message: input }),
+  }
+);
+
+const data = await res.json();
+
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: data.reply || "No response from AI." },
+      ]);
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "⚠️ AI service unavailable." },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🟢 COLLAPSED STATE
   if (!open) {
     return (
       <button
         onClick={() => setOpen(true)}
         className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-purple-600 hover:bg-purple-700 shadow-xl flex items-center justify-center z-50"
-        title="Open AI Assistant"
       >
         <Bot className="w-6 h-6 text-white" />
       </button>
     );
   }
 
-  // 🟣 EXPANDED PANEL STATE
+  // 🟣 EXPANDED PANEL
   return (
-    <div className="fixed bottom-6 right-6 w-80 rounded-xl bg-slate-900 border border-slate-800 shadow-2xl z-50">
-      
+    <div className="fixed bottom-6 right-6 w-80 h-96 rounded-xl bg-slate-900 border border-slate-800 shadow-2xl z-50 flex flex-col">
       {/* Header */}
       <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-        <div>
-          <h3 className="text-white font-semibold flex items-center gap-2">
-            🤖 ConferX Assistant
-          </h3>
-          <p className="text-xs text-slate-400">
-            AI-powered meeting assistant
-          </p>
-        </div>
-        <button
-          onClick={() => setOpen(false)}
-          className="text-slate-400 hover:text-white"
-        >
-          <X className="w-5 h-5" />
+        <h3 className="text-white font-semibold flex items-center gap-2">
+          🤖 ConferX Assistant
+        </h3>
+        <button onClick={() => setOpen(false)}>
+          <X className="w-5 h-5 text-slate-400 hover:text-white" />
         </button>
       </div>
 
-      {/* Body */}
-      <div className="p-4 text-sm text-slate-300 space-y-2">
-        <p>• Meeting summaries</p>
-        <p>• Action items</p>
-        <p>• Smart Q&A</p>
+      {/* Messages */}
+      <div className="flex-1 p-4 space-y-3 overflow-y-auto text-sm">
+        {messages.map((msg, idx) => (
+          <div
+            key={idx}
+            className={`max-w-[85%] px-3 py-2 rounded-lg ${
+              msg.role === "user"
+                ? "ml-auto bg-purple-600 text-white"
+                : "mr-auto bg-slate-800 text-slate-200"
+            }`}
+          >
+            {msg.content}
+          </div>
+        ))}
+        {loading && (
+          <div className="text-slate-400 text-xs">Assistant is typing...</div>
+        )}
+      </div>
 
-        <button
+      {/* Input */}
+      <div className="p-3 border-t border-slate-800 flex gap-2">
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           disabled={!AI_ENABLED}
-          className={`mt-4 w-full py-2 rounded-lg text-sm ${
-            AI_ENABLED
-              ? "bg-purple-600 hover:bg-purple-700 text-white"
-              : "bg-slate-700 text-slate-400 cursor-not-allowed"
-          }`}
+          placeholder={
+            AI_ENABLED ? "Ask something..." : "AI disabled (credits required)"
+          }
+          className="flex-1 px-3 py-2 rounded-lg bg-slate-800 text-slate-200 text-sm outline-none disabled:opacity-50"
+        />
+        <button
+          onClick={sendMessage}
+          disabled={!AI_ENABLED || loading}
+          className="p-2 rounded-lg bg-purple-600 hover:bg-purple-700 disabled:opacity-50"
         >
-          {AI_ENABLED ? "Ask Assistant" : "AI Disabled (Credits Required)"}
+          <Send className="w-4 h-4 text-white" />
         </button>
       </div>
     </div>

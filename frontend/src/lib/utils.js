@@ -4,4 +4,4 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
-export const AI_ENABLED = false;
+export const AI_ENABLED = true;
