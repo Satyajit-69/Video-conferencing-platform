@@ -48,6 +48,8 @@ app.get("/home", (req, res) => {
 app.use("/api/users", user_routes);
 app.use("/api/vector", vector_routes);
 app.use("/api/assistant", assistantRoutes);
+app.use("/api/meetings", meetingRoutes);
+
 // MongoDB connection
 mongoose
   .connect(process.env.MONGO_URL)

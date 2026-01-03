@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import {
   Plus,
   Users,
@@ -59,16 +61,16 @@ export default function Dashboard() {
       participants: 7,
     },
   ];
+  const navigate = useNavigate();
 
   const handleJoinMeeting = () => {
     if (!meetingCode.trim()) return;
     window.location.href = `/meetingroom/${meetingCode}`;
   };
+const handleCreateMeeting = () => {
+  navigate("/create-meeting");
+};
 
-  const handleCreateMeeting = () => {
-    const newId = Math.random().toString(36).substring(2, 10);
-    window.location.href = `/meetingroom/${newId}`;
-  };
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
