@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
 
-const SOCKET_SERVER = "https://video-conferencing-platform-98jv.onrender.com";
+const SOCKET_SERVER = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 export default function VideoMeeting() {
   const localVideo = useRef(null);
