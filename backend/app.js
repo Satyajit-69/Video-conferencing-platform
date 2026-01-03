@@ -10,6 +10,7 @@ import cors from "cors";
 import { socketManager } from "./src/controllers/socketManager.js";
 import user_routes from "./src/routes/user_routes.js";
 import vector_routes from "./src/routes/vector_routes.js";
+import meetingRoutes from "./src/routes/meeting_routes.js"
 import assistantRoutes from "./src/routes/assistant_routes.js";
 
 

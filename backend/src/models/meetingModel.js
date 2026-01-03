@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const meetingSchema = new mongoose.Schema({
   user_id: { type: String },
@@ -7,4 +7,4 @@ const meetingSchema = new mongoose.Schema({
 });
 
 const Meeting = mongoose.model("Meeting", meetingSchema);
-module.exports = { Meeting };
+export { Meeting };

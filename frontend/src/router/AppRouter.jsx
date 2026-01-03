@@ -9,7 +9,7 @@ import CreateMeeting from "../pages/CreateMeeting";
 import NotFound from "../pages/NotFound";
 
 import Navbar from "../utils/Navbar";
-import Footer from "../utils/Footer";
+import Footer from "../utils/Footer" ;
 
 export default function AppRouter() {
   return (

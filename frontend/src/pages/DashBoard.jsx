@@ -67,7 +67,7 @@ export default function Dashboard() {
     if (!meetingCode.trim()) return;
     window.location.href = `/meetingroom/${meetingCode}`;
   };
-const handleCreateMeeting = () => {
+  const handleCreateMeeting = () => {
   navigate("/create-meeting");
 };
 
