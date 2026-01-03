@@ -22,17 +22,25 @@ export default function AssistantPanel() {
     try {
       const token = localStorage.getItem("token");
 
+      if (!token) {
+        throw new Error("User not authenticated");
+      }
+
       const res = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/api/assistant/chat`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
+            Authorization: `Bearer ${token}`, // 🔥 REQUIRED
           },
           body: JSON.stringify({ message: input }),
         }
       );
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
 
       const data = await res.json();
 
