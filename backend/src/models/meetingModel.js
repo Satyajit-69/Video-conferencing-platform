@@ -10,19 +10,38 @@ const meetingSchema = new mongoose.Schema(
     meetingCode: {
       type: String,
       required: true,
+      unique: true,
     },
-    meetingTitle: String,
-    meetingPurpose: String,
-    duration: String,
-    isPublic: Boolean,
-    password: String,
-    date: {
+    meetingTitle: {
+      type: String,
+      required: true,
+    },
+    meetingPurpose: {
+      type: String,
+      required: true,
+    },
+    duration: {
+      type: String,
+      required: true,
+    },
+    isPublic: {
+      type: Boolean,
+      default: true,
+    },
+    password: {
+      type: String,
+      default: null,
+    },
+    createdAt: {
       type: Date,
       default: Date.now,
+    },
+    completed: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
 );
 
-const Meeting = mongoose.model("Meeting", meetingSchema);
-export { Meeting };
+export const Meeting = mongoose.model("Meeting", meetingSchema);
