@@ -7,41 +7,48 @@ const meetingSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
     meetingCode: {
       type: String,
       required: true,
       unique: true,
     },
+
     meetingTitle: {
       type: String,
       required: true,
     },
+
     meetingPurpose: {
       type: String,
       required: true,
     },
+
     duration: {
       type: String,
       required: true,
     },
+
     isPublic: {
       type: Boolean,
       default: true,
     },
+
     password: {
       type: String,
       default: null,
     },
-    createdAt: {
+    scheduledAt: {
       type: Date,
       default: Date.now,
     },
+
     completed: {
       type: Boolean,
       default: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true } // createdAt & updatedAt auto
 );
 
 export const Meeting = mongoose.model("Meeting", meetingSchema);

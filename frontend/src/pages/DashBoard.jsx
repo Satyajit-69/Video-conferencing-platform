@@ -76,6 +76,10 @@ export default function Dashboard() {
     navigate("/create-meeting");
   };
 
+  const handleScheduleMeeting = () => {
+    navigate("/schedule-meeting");
+  };
+
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
     alert("Meeting link copied!");
@@ -113,7 +117,7 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 gap-6 mb-12">
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
           <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center">
@@ -158,6 +162,24 @@ export default function Dashboard() {
                 Join
               </button>
             </div>
+          </div>
+
+          <div className="bg-slate-900/60 border border-slate-800 rounded-xl p-6">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center">
+                <Calendar className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold">Schedule Meeting</h3>
+                <p className="text-slate-400 text-sm">Plan a meeting for later</p>
+              </div>
+            </div>
+            <button
+              onClick={handleScheduleMeeting}
+              className="w-full py-3 bg-green-600 rounded-lg hover:bg-green-700 transition"
+            >
+              Schedule Meeting
+            </button>
           </div>
         </div>
 

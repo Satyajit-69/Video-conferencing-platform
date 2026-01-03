@@ -15,6 +15,7 @@ export const createMeeting = async (req, res) => {
       duration,
       isPublic,
       password,
+      scheduledAt,
     } = req.body;
 
     if (!meetingTitle || !meetingPurpose || !duration) {
@@ -34,6 +35,7 @@ export const createMeeting = async (req, res) => {
       duration,
       isPublic,
       password: isPublic ? null : password,
+      scheduledAt: scheduledAt ? new Date(scheduledAt) : new Date(), // Use provided date or current date
     });
 
     res.status(201).json({

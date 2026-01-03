@@ -7,7 +7,7 @@ import Dashboard from "../pages/DashBoard";
 import VideoMeeting from "../pages/VideoMeeting";
 import CreateMeeting from "../pages/CreateMeeting";
 import NotFound from "../pages/NotFound";
-
+import ScheduleMeeting from "../pages/ScheduleMeeting";
 import Navbar from "../utils/Navbar";
 import Footer from "../utils/Footer" ;
 
@@ -42,7 +42,8 @@ function MainRoutes() {
 
         {/* DASHBOARD */}
         <Route path="/dashboard" element={<Dashboard />} />
-
+        {/* Schedule a meeting */}
+        <Route path="/schedule-meeting" element={<ScheduleMeeting />} />
         {/* CREATE MEETING */}
         <Route path="/create-meeting" element={<CreateMeeting />} />
 
