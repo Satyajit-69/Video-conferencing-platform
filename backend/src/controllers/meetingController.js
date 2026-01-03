@@ -9,9 +9,6 @@ import { Meeting } from "../models/meetingModel.js";
  */
 export const createMeeting = async (req, res) => {
   try {
-    console.log("req.user:", req.user);
-    console.log("req.body:", req.body);
-
     const {
       meetingTitle,
       meetingPurpose,
