@@ -31,7 +31,7 @@ export const createMeeting = async (req, res) => {
     const meetingCode = Math.random().toString(36).substring(2, 10);
 
     const meeting = await Meeting.create({
-      user_id: req.user._id, // from verifyToken
+      user_id: req.user.id, // from verifyToken
       meetingCode,
       meetingTitle,
       meetingPurpose,
@@ -65,7 +65,7 @@ export const createMeeting = async (req, res) => {
 export const getUserMeetings = async (req, res) => {
   try {
     const meetings = await Meeting.find({
-      user_id: req.user._id,
+      user_id: req.user.id,
     }).sort({ date: -1 });
 
     res.status(200).json({
@@ -127,7 +127,7 @@ export const completeMeeting = async (req, res) => {
 
     const meeting = await Meeting.findOne({
       meetingCode,
-      user_id: req.user._id,
+      user_id: req.user.id,
     });
 
     if (!meeting) {
