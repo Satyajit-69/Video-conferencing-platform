@@ -219,6 +219,117 @@ export default function VideoConferencingLanding() {
           </div>
         </div>
       </section>
+       {/* AI ASSISTANT SECTION */}
+<section id="ai-assistant" className="py-28 px-6 bg-gradient-to-br from-slate-950 via-purple-950/30 to-slate-900 relative overflow-hidden">
+  {/* Glow blobs */}
+  <div className="absolute top-20 left-10 w-80 h-80 bg-purple-600/30 rounded-full blur-3xl animate-float"></div>
+  <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-float-delayed"></div>
+
+  <div className="max-w-7xl mx-auto relative z-10 grid md:grid-cols-2 gap-14 items-center">
+    
+    {/* LEFT CONTENT */}
+    <div className="space-y-8 animate-slide-right">
+      <div className="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-500/30 rounded-full px-4 py-2 text-sm backdrop-blur-xl">
+        <Sparkles className="w-4 h-4 text-purple-400 animate-spin-slow" />
+        <span>AI-Powered Assistant</span>
+      </div>
+
+      <h2 className="text-4xl md:text-5xl font-bold leading-tight">
+        Meet Your <br />
+        <span className="bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
+          Smart Meeting Assistant
+        </span>
+      </h2>
+
+      <p className="text-lg text-slate-300">
+        ConferX AI is your personal productivity companion.  
+        It understands context, remembers conversations, and assists you
+        throughout your meetings — just like a real teammate.
+      </p>
+
+      <ul className="space-y-4">
+        {[
+          "💬 Ask questions during live meetings",
+          "🧠 Remembers past conversations securely",
+          "⚡ Instant, context-aware responses",
+          "🔐 Private per-user AI memory",
+          "📈 Boosts productivity & focus"
+        ].map((item, i) => (
+          <li
+            key={i}
+            className="flex items-center gap-3 text-slate-200 animate-slide-up"
+            style={{ animationDelay: `${i * 0.1}s` }}
+          >
+            <Check className="w-5 h-5 text-green-400" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="flex gap-4 pt-4">
+        <button className="bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 rounded-xl font-semibold hover:scale-105 transition">
+          Try AI Assistant
+        </button>
+        <button className="border border-slate-600 px-6 py-3 rounded-xl hover:bg-slate-800 transition">
+          Learn More
+        </button>
+      </div>
+    </div>
+
+    {/* RIGHT ASSISTANT PREVIEW */}
+    <div className="relative animate-slide-left">
+      <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-700 rounded-2xl shadow-2xl w-full max-w-md mx-auto">
+        
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-t-2xl">
+          <div className="flex items-center gap-2 text-white font-semibold">
+            🤖 ConferX Assistant
+          </div>
+          <div className="flex gap-2">
+            <div className="w-3 h-3 bg-white/80 rounded-full"></div>
+            <div className="w-3 h-3 bg-white/60 rounded-full"></div>
+            <div className="w-3 h-3 bg-white/40 rounded-full"></div>
+          </div>
+        </div>
+
+        {/* Chat body */}
+        <div className="p-4 space-y-3 text-sm h-72 overflow-hidden">
+          <div className="bg-slate-800 text-slate-200 px-3 py-2 rounded-lg w-fit">
+            Hi 👋 How can I help you today?
+          </div>
+
+          <div className="bg-purple-600 text-white px-3 py-2 rounded-lg w-fit ml-auto">
+            What is my name?
+          </div>
+
+          <div className="bg-slate-800 text-slate-200 px-3 py-2 rounded-lg w-fit">
+            Your name is <strong>Satyajit</strong>.
+          </div>
+
+          <div className="bg-purple-600 text-white px-3 py-2 rounded-lg w-fit ml-auto">
+            Summarize today’s meeting
+          </div>
+
+          <div className="bg-slate-800 text-slate-200 px-3 py-2 rounded-lg w-fit">
+            You discussed UI improvements, AI integration, and deployment status.
+          </div>
+        </div>
+
+        {/* Input */}
+        <div className="border-t border-slate-700 p-3 flex gap-2">
+          <input
+            disabled
+            placeholder="Ask something..."
+            className="flex-1 bg-slate-800 px-3 py-2 rounded-lg text-slate-400 text-sm"
+          />
+          <button className="bg-purple-600 px-4 rounded-lg text-white">
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Pricing */}
       <section id="pricing" className="py-20 px-6">
