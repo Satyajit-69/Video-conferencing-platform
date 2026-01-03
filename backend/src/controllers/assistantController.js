@@ -1,7 +1,10 @@
+import Conversation from "../models/conversationModel.js";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
 export const chatAssistant = async (req, res) => {
   try {
     const { message } = req.body;
-    const userId = req.user._id || req.user.id; // 🔥 SAFE FIX
+    const userId = req.user._id || req.user.id;
 
     if (!message) {
       return res.status(400).json({ error: "Message is required" });
@@ -28,12 +31,8 @@ User: ${message}
 Assistant:
 `;
 
-    if (!process.env.GOOGLE_API_KEY) {
-      throw new Error("GOOGLE_API_KEY is missing");
-    }
-
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // ✅ FIX
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const result = await model.generateContent(finalPrompt);
     const reply = result.response.text();
