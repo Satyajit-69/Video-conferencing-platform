@@ -1,10 +1,14 @@
 export const chatAssistant = async (req, res) => {
   try {
     const { message } = req.body;
-    const userId = req.user._id; // ✅ FIXED
+    const userId = req.user._id || req.user.id; // 🔥 SAFE FIX
 
     if (!message) {
       return res.status(400).json({ error: "Message is required" });
+    }
+
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
     }
 
     let convo = await Conversation.findOne({ userId });
@@ -24,8 +28,12 @@ User: ${message}
 Assistant:
 `;
 
+    if (!process.env.GOOGLE_API_KEY) {
+      throw new Error("GOOGLE_API_KEY is missing");
+    }
+
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // ✅ FIX
 
     const result = await model.generateContent(finalPrompt);
     const reply = result.response.text();
@@ -39,7 +47,7 @@ Assistant:
 
     res.json({ reply });
   } catch (error) {
-    console.error("Assistant Memory Error:", error);
+    console.error("Assistant Memory Error:", error.message);
     res.status(500).json({ error: "Assistant failed" });
   }
 };
