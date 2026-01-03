@@ -1,7 +1,7 @@
 export const chatAssistant = async (req, res) => {
   try {
     const { message } = req.body;
-    const userId = req.user.id; // ✅ FIXED
+    const userId = req.user._id; // ✅ FIXED
 
     if (!message) {
       return res.status(400).json({ error: "Message is required" });

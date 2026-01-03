@@ -37,24 +37,28 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
 
-      const res = await fetch("https://video-conferencing-platform-98jv.onrender.com/api/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
+      const res = await fetch(
+        "https://video-conferencing-platform-98jv.onrender.com/api/users/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        }
+      );
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+      if (!res.ok) throw new Error(data.message || "Login failed");
 
+      // ✅ SAVE USER + TOKEN
       setUser(data.user);
       setWelcomeMode("login");
 
       localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token); // 🔥 FIX
       localStorage.setItem("welcomeMode", "login");
 
       showAlert("success", "Successfully logged in!");
       return { success: true };
-
     } catch (err) {
       showAlert("error", err.message);
       return { success: false, message: err.message };
@@ -70,24 +74,28 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
 
-      const res = await fetch("https://video-conferencing-platform-98jv.onrender.com/api/users/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, username, password }),
-      });
+      const res = await fetch(
+        "https://video-conferencing-platform-98jv.onrender.com/api/users/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, username, password }),
+        }
+      );
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
+      if (!res.ok) throw new Error(data.message || "Registration failed");
 
+      // ✅ SAVE USER + TOKEN
       setUser(data.user);
       setWelcomeMode("register");
 
       localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token); // 🔥 FIX
       localStorage.setItem("welcomeMode", "register");
 
       showAlert("success", "Account created successfully!");
       return { success: true };
-
     } catch (err) {
       showAlert("error", err.message);
       return { success: false, message: err.message };
@@ -101,7 +109,9 @@ export const AuthProvider = ({ children }) => {
   // ------------------------------------
   const logout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token"); // 🔥 CLEAR TOKEN
     localStorage.removeItem("welcomeMode");
+
     setUser(null);
     setWelcomeMode("login");
 
