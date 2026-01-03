@@ -20,19 +20,22 @@ export default function AssistantPanel() {
     setLoading(true);
 
     try {
-      const res = await fetch(
+      const token = localStorage.getItem("token");
+
+const res = await fetch(
   `${import.meta.env.VITE_BACKEND_URL}/api/assistant/chat`,
   {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      ...(token && { Authorization: `Bearer ${token}` }),
     },
     body: JSON.stringify({ message: input }),
   }
 );
 
-const data = await res.json();
+
+      const data = await res.json();
 
       setMessages((prev) => [
         ...prev,
