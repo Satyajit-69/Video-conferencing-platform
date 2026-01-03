@@ -22,18 +22,17 @@ export default function AssistantPanel() {
     try {
       const token = localStorage.getItem("token");
 
-const res = await fetch(
-  `${import.meta.env.VITE_BACKEND_URL}/api/assistant/chat`,
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
-    body: JSON.stringify({ message: input }),
-  }
-);
-
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/assistant/chat`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
+          body: JSON.stringify({ message: input }),
+        }
+      );
 
       const data = await res.json();
 
