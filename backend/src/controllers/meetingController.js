@@ -63,7 +63,7 @@ export const getUserMeetings = async (req, res) => {
   try {
     const meetings = await Meeting.find({
       user_id: req.user.id,
-    }).sort({ date: -1 });
+    }).sort({ scheduledAt: -1 });
 
     res.status(200).json({
       success: true,

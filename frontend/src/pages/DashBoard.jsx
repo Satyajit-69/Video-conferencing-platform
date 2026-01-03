@@ -45,13 +45,13 @@ export default function Dashboard() {
 
         setUpcomingMeetings(
           data.meetings.filter(
-            (m) => new Date(m.date) >= now
+            (m) => new Date(m.scheduledAt) >= now
           )
         );
 
         setRecentMeetings(
           data.meetings.filter(
-            (m) => new Date(m.date) < now
+            (m) => new Date(m.scheduledAt) < now
           )
         );
       } catch (err) {
@@ -203,7 +203,7 @@ export default function Dashboard() {
                   </h3>
                   <div className="text-sm text-slate-400 flex gap-2 mb-3">
                     <Clock className="w-4 h-4" />
-                    {new Date(m.date).toLocaleString()}
+                    {new Date(m.scheduledAt).toLocaleString()}
                   </div>
 
                   <div className="flex gap-2">
@@ -252,7 +252,7 @@ export default function Dashboard() {
                     <div className="text-sm text-slate-400 flex gap-4">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-4 h-4" />
-                        {new Date(m.date).toLocaleDateString()}
+                        {new Date(m.scheduledAt).toLocaleDateString()}
                       </span>
                       <span className="flex items-center gap-1">
                         <Users className="w-4 h-4" />
